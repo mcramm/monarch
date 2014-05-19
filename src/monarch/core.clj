@@ -16,7 +16,7 @@
 ;;==============================================================================
 ;; Generate
 
-(defmethod process-command "generate" [command config opts]
+(defmethod process-command :generate [command config opts]
   (if (first opts)
     (create-migration-file (:location (merge default-config config))
                            (first opts))
@@ -74,7 +74,7 @@
                       version))
     (println "Nothing to roll back.")))
 
-(defmethod process-command "rollback" [command config opts]
+(defmethod process-command :rollback [command config opts]
   (if-not spec
     (println "No DATABASE_URL has been setup.")
     (migrate-down (merge default-config config ) opts)))
@@ -106,7 +106,7 @@
                             table
                             version)))))))
 
-(defmethod process-command "up" [command config opts]
+(defmethod process-command :up [command config opts]
   (migrate-up (merge default-config config) opts))
 
 (defmethod process-command nil [command config opts]
@@ -122,7 +122,7 @@
                         (keyword table)
                         [:version :varchar "NOT NULL"])))
 
-(defmethod process-command "setup" [command config opts]
+(defmethod process-command :setup [command config opts]
   (if-not spec
     (println "No DATABASE_URL has been setup.")
     (create-tracking-table (:table (merge default-config config)))))
