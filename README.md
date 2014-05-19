@@ -19,10 +19,10 @@ track which versions have been applied in the `schema_versions` table. You can
 override these defaults by adding a `:migrations` key pointing at a map in your
 project.clj like this:
 
-`
+```clj
 :migrations {:table     "schema_versions"
              :location  "data/migrations"}
-`
+```
 
 * `:location` identifies where to look for migrations.
 * `:table` is the name of the table that tracks which migrations have been
@@ -59,7 +59,7 @@ will be executed in the order defined. All statements are applied in a
 transaction.
 
 Example:
-`
+```clj
 {:up ["CREATE TABLE users (
           id SERIAL PRIMARY KEY,
           email TEXT,
@@ -73,20 +73,36 @@ Example:
       )"]
  :down ["DROP TABLE posts"
         "DROP TABLE users"]}
-`
+```
+
+## Quick Tutorial
+
+1. Create a new project with `lein new hello-world`
+2. `cd` into the project and add `[monarch "0.1.2"]` to the `:plugins` key in
+   `project.clj`
+3. Run `lein deps`
+4. Startup Postgres and create a database named "helloworld".
+5. Export the following environment variable. Note that your connection
+   information might be different:
+
+   `export DATABASE_URL="postgresql://localhost:5432/helloworld"`
+
+5. Run `lein monarch :setup`.
+6. Run `lein monarch :generate create_users`
+7. Edit the resulting migration in data/migrations to look like the migration
+   above.
+8. run `lein monarch :up`
 
 ## Available Commands
 
 Examples
-    $ lein monarch :setup           # Run necessary setup.
-    $ lein monarch :generate <name> # generate a new migration file
-
-    $ lein monarch
-    $ lein monarch :up              # apply all outstanding migrations
-
-    $ lein monarch :rollback        # roll the database back one version
-
-
+```bash
+$ lein monarch :setup           # Run necessary setup.
+$ lein monarch :generate <name> # generate a new migration file
+$ lein monarch
+$ lein monarch :up              # apply all outstanding migrations
+$ lein monarch :rollback        # roll the database back one version
+```
 
 ## License
 
