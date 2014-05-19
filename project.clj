@@ -1,6 +1,6 @@
 (defproject monarch "0.1.0"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Rails style migrations for Clojure projects."
+  :url "https://github.com/mcramm/monarch"
   :dependencies [[org.clojure/java.jdbc "0.3.3"]
                  [postgresql "9.3-1101.jdbc4"]]
   :license {:name "Eclipse Public License"
