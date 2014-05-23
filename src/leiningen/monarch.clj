@@ -11,13 +11,13 @@
    export DATABASE_URL=\"postgresql://localhost:5432/helloworld\"
 
    Available commands:
-    $ lein monarch :setup           # Run necessary setup. (only run once)
-    $ lein monarch :generate <name> # generate a new migration file
+    $ lein monarch setup           # Run necessary setup. (only run once)
+    $ lein monarch generate <name> # generate a new migration file
 
     $ lein monarch
-    $ lein monarch :up              # apply all outstanding migrations
+    $ lein monarch up              # apply all outstanding migrations
 
-    $ lein monarch :rollback        # roll the database back one version
+    $ lein monarch rollback        # roll the database back one version
   "
   [project & args]
   (process-command (first args) (:migrations project) (rest args)))
