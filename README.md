@@ -6,13 +6,13 @@ A Leiningen plugin to handle rails-style migrations.
 
 Use this for user-level plugins:
 
-Put `[monarch "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your
+Put `[monarch "0.1.2"]` into the `:plugins` vector of your
 `:user` profile, or if you are on Leiningen 1.x do `lein plugin install
-monarch 0.1.0-SNAPSHOT`.
+monarch 0.1.2`.
 
 Use this for project-level plugins:
 
-Put `[monarch "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your project.clj.
+Put `[monarch "0.1.2"]` into the `:plugins` vector of your project.clj.
 
 The default config will look for migration files in `data/migrations`, and will
 track which versions have been applied in the `schema_versions` table. You can
