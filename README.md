@@ -93,6 +93,7 @@ Example:
    above.
 8. run `lein monarch :up`
 
+There is an [example app](https://github.com/mcramm/monarch-blog) too.
 ## Available Commands
 
 Examples
