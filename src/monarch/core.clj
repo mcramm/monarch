@@ -1,12 +1,13 @@
 (ns monarch.core
   (:require [clojure.java.jdbc :as sql]
             [monarch.generate :refer [create-migration-file]]
-            [monarch.util :refer [file->version get-file-name]]))
+            [monarch.util :refer [file->version get-file-name]]
+            [clojure.tools.reader.edn :as edn]))
 
 (defmulti process-command
   (fn [command config opts]
     (when command
-      (read-string command))))
+      (edn/read-string command))))
 
 (defmethod process-command :default [command config opts]
   (println "Unrecognized command" command))
@@ -37,7 +38,7 @@
   "Slurps the contents of a file and parses it."
   [file]
   (let [contents (slurp (.getPath file))]
-    (read-string contents)))
+    (edn/read-string contents)))
 
 (defn remove-version
   "Removes a version from the tracking table."
