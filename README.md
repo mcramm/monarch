@@ -6,7 +6,7 @@ A Leiningen plugin to handle rails-style migrations.
 
 Use this for user-level plugins:
 
-Put `[monarch "0.0.2"]` into the `:plugins` vector of your
+Put `[monarch "0.2.0"]` into the `:plugins` vector of your
 `:user` profile, or if you are on Leiningen 1.x do `lein plugin install
 monarch 0.2.0`.
 
