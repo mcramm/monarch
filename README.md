@@ -6,13 +6,13 @@ A Leiningen plugin to handle rails-style migrations.
 
 Use this for user-level plugins:
 
-Put `[monarch "0.2.0"]` into the `:plugins` vector of your
+Put `[monarch "0.2.1"]` into the `:plugins` vector of your
 `:user` profile, or if you are on Leiningen 1.x do `lein plugin install
-monarch 0.2.0`.
+monarch 0.2.1`.
 
 Use this for project-level plugins:
 
-Put `[monarch "0.2.0"]` into the `:plugins` vector of your project.clj.
+Put `[monarch "0.2.1"]` into the `:plugins` vector of your project.clj.
 
 The default config will look for migration files in `data/migrations`, and will
 track which versions have been applied in the `schema_versions` table. You can
@@ -78,7 +78,7 @@ Example:
 ## Quick Tutorial
 
 1. Create a new project with `lein new hello-world`
-2. `cd` into the project and add `[monarch "0.2.0"]` to the `:plugins` key in
+2. `cd` into the project and add `[monarch "0.2.1"]` to the `:plugins` key in
    `project.clj`
 3. Run `lein deps`
 4. Startup Postgres and create a database named "helloworld".
