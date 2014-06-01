@@ -1,4 +1,4 @@
-(defproject monarch "0.2.1-SNAPSHOT"
+(defproject monarch "0.2.2"
   :description "Rails style migrations for Clojure projects."
   :url "https://github.com/mcramm/monarch"
   :dependencies [[org.clojure/java.jdbc "0.3.3"]
