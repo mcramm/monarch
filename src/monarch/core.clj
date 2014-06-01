@@ -22,8 +22,9 @@
 
 (defmethod process-command 'generate [command config opts]
   (if (first opts)
-    (create-migration-file (:location (merge default-config config))
-                           (first opts))
+    (let [path (create-migration-file (:location (merge default-config config))
+                           (first opts))]
+      (println "Generated" path))
     (println "no file name specified")))
 
 ;;==============================================================================

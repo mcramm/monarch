@@ -13,4 +13,6 @@
                dir
                (str (current-time-string (now)) "_" file-name ".edn"))]
     (.mkdirs dir)
-    (spit (.getPath file) "{:up [] :down []}")))
+    (let [path (.getPath file)]
+      (spit path "{:up [] :down []}")
+      path)))
