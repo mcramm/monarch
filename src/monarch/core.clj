@@ -2,7 +2,8 @@
   (:require [clojure.java.jdbc :as sql]
             [monarch.generate :refer [create-migration-file]]
             [monarch.util :refer [file->version get-file-name]]
-            [clojure.tools.reader.edn :as edn]))
+            [clojure.tools.reader.edn :as edn]
+            [environ.core :refer :all]))
 
 (defmulti process-command
   (fn [command config opts]
@@ -15,7 +16,10 @@
 (def default-config {:location "data/schema_migrations"
                      :table "schema_versions"})
 
-(def spec (System/getenv "DATABASE_URL"))
+(defn get-spec [config]
+  (get-in env
+          [(:config-lens config) :database-url]
+          (env :database-url)))
 
 ;;==============================================================================
 ;; Generate
@@ -56,7 +60,7 @@
    Will insert/remove the version from the tracking table based on the
    direction.
    All operations are run within a transaction."
-  [migration direction table version]
+  [spec migration direction table version]
   (sql/with-db-transaction [tran spec]
     (try
       (doseq [statement (get migration direction)]
@@ -77,7 +81,7 @@
 
 (defn get-last-version
   "Get the most recently applied version."
-  [table]
+  [spec table]
   (-> (sql/query spec
                 [(str "select max(version) from  " table)])
       first
@@ -85,29 +89,29 @@
 
 (defn migrate-down
   "Rolls back the most recent version applied to the database."
-  [{:keys [location table]} opts]
-  (if-let [version (get-last-version table)]
+  [spec {:keys [location table]}]
+  (if-let [version (get-last-version spec table)]
     (let [files (filter #(re-find (re-pattern version)
                                   (get-file-name %)) (get-available-migrations location))]
       (println "Rolling back" version)
-      (execute-change (get-migration (first files))
+      (execute-change spec
+                      (get-migration (first files))
                       :down
                       table
                       version))
     (println "Nothing to roll back.")))
 
 (defmethod process-command 'rollback [command config opts]
-  (if-not spec
-    (println "No DATABASE_URL has been setup.")
-    (migrate-down (merge default-config config ) opts)))
-
+  (if-let [spec (get-spec config)]
+      (migrate-down spec (merge default-config config ))
+      (println "No DATABASE_URL has been setup.")))
 
 ;;==============================================================================
 ;; Migrating Up
 
 (defn applied?
   "Checks if a specific version exists in a table."
-  [table version]
+  [spec table version]
   (not
     (nil?
      (-> (sql/query spec
@@ -118,25 +122,26 @@
 
 (defn migrate-up
   "Applies all outstanding migrations."
-  [{:keys [location table]} opts]
+  [spec {:keys [location table]}]
   (if-not spec
     (println "No DATABASE_URL has been setup.")
     (do
       ; get list of files
       (doseq [file (get-available-migrations location)]
         (let [version (file->version file)]
-          (when-not (applied? table version)
+          (when-not (applied? spec table version)
             (println "Migrating" version)
-            (execute-change (get-migration file)
+            (execute-change spec
+                            (get-migration file)
                             :up
                             table
                             version)))))))
 
 (defmethod process-command 'up [command config opts]
-  (migrate-up (merge default-config config) opts))
+  (migrate-up (get-spec config) (merge default-config config)))
 
 (defmethod process-command nil [command config opts]
-  (migrate-up (merge default-config config) opts))
+  (migrate-up (get-spec config) (merge default-config config)))
 
 
 ;;==============================================================================
@@ -144,13 +149,13 @@
 
 (defn create-tracking-table
   "Creates the table that will track the applied migrations."
-  [table]
+  [spec table]
   (sql/db-do-commands spec
                       (sql/create-table-ddl
                         (keyword table)
                         [:version :varchar "NOT NULL"])))
 
 (defmethod process-command 'setup [command config opts]
-  (if-not spec
-    (println "No DATABASE_URL has been setup.")
-    (create-tracking-table (:table (merge default-config config)))))
+  (if-let [spec (get-spec config)]
+    (create-tracking-table spec (:table (merge default-config config)))
+    (println "No DATABASE_URL has been setup.")))
